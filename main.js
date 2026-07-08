@@ -14,7 +14,6 @@ const DEFAULTS = {
   height: 1920,
   background: '#b50029',
   spanCount: 3,
-  spanHeight: 480,
   spawnCount: 3,
   spawnWidth: 300,
   spawnHeight: 300
@@ -99,7 +98,7 @@ function createSpans(count, oldSpans) {
     const old = oldSpans[index];
     const span = old ? { ...old } : {
       id: `span-${index + 1}`,
-      height: DEFAULTS.spanHeight,
+      height: getDefaultSpanHeight(index, count),
       nudgeY: 0,
       spawnCount: DEFAULTS.spawnCount,
       defaultSpawnWidth: DEFAULTS.spawnWidth,
@@ -112,6 +111,13 @@ function createSpans(count, oldSpans) {
     span.spawns = createSpawns(span.spawnCount, span.spawns, span, index);
     return span;
   });
+}
+
+function getDefaultSpanHeight(index, count) {
+  if (count === 3) {
+    return Math.round(state.height * (index === 1 ? 0.5 : 0.25));
+  }
+  return Math.round(state.height / Math.max(count, 1));
 }
 
 function createSpawns(count, oldSpawns, span, spanIndex) {
@@ -269,7 +275,7 @@ function updatePreview() {
 }
 
 function scalePreviewFrame() {
-  const pad = 32;
+  const pad = 96;
   const scale = Math.min((els.previewStage.clientWidth - pad) / state.width, (els.previewStage.clientHeight - pad) / state.height, 1);
   els.previewFrame.style.width = `${state.width}px`;
   els.previewFrame.style.height = `${state.height}px`;
