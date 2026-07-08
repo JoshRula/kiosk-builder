@@ -1,1 +1,59 @@
-<html></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kiosk Layout Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="builder-shell">
+    <section class="preview-column" aria-labelledby="preview-heading">
+      <header class="panel-header">
+        <div>
+          <h1 id="preview-heading">Kiosk Layout Builder</h1>
+          <p>Static browser-only builder for fixed-pixel kiosk page templates.</p>
+        </div>
+        <div class="preview-meta" id="previewMeta">1080 × 1920</div>
+      </header>
+      <div class="preview-stage" id="previewStage">
+        <iframe id="previewFrame" title="Generated kiosk layout preview"></iframe>
+      </div>
+    </section>
+
+    <aside class="controls-column" aria-labelledby="controls-heading">
+      <h2 id="controls-heading">Controls</h2>
+      <form id="builderControls">
+        <section class="control-card">
+          <h3>Screen Settings</h3>
+          <div class="grid two-col">
+            <label>Screen name<input id="screenName" type="text" value="demo-screen"></label>
+            <label>Background<input id="backgroundColor" type="color" value="#b50029"></label>
+            <label>Width<input id="screenWidth" type="number" min="1" step="1" value="1080"></label>
+            <label>Height<input id="screenHeight" type="number" min="1" step="1" value="1920"></label>
+            <label>Number of spans<input id="spanCount" type="number" min="0" step="1" value="3"></label>
+            <label class="checkbox-label"><input id="evenVerticalSpacing" type="checkbox" checked> Even vertical spacing</label>
+          </div>
+        </section>
+
+        <section class="control-card">
+          <h3>Span Settings</h3>
+          <div id="spanControls"></div>
+        </section>
+      </form>
+
+      <section class="control-card export-card">
+        <h3>Export</h3>
+        <p>Downloads three standalone files for GitHub Pages or any static host. No ZIP and no backend.</p>
+        <div class="button-row">
+          <button id="downloadHtml" type="button">Download HTML</button>
+          <button id="downloadCss" type="button">Download CSS</button>
+          <button id="downloadJs" type="button">Download JS</button>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
