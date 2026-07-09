@@ -275,11 +275,27 @@ function updatePreview() {
 }
 
 function scalePreviewFrame() {
-  const pad = 10;
-  const scale = Math.min((els.previewStage.clientWidth - pad) / state.width, (els.previewStage.clientHeight - pad) / state.height, 1) * 0.35;
+  const previewMargin = 24;
+
+  const availableWidth = els.previewStage.clientWidth - previewMargin * 2;
+  const availableHeight = els.previewStage.clientHeight - previewMargin * 2;
+
+  const widthScale = availableWidth / state.width;
+  const heightScale = availableHeight / state.height;
+
+  const scale = Math.min(widthScale, heightScale, 1);
+
+  const scaledWidth = state.width * scale;
+  const scaledHeight = state.height * scale;
+
   els.previewFrame.style.width = `${state.width}px`;
   els.previewFrame.style.height = `${state.height}px`;
+  els.previewFrame.style.transformOrigin = 'top left';
   els.previewFrame.style.transform = `scale(${Math.max(scale, 0.05)})`;
+
+  els.previewFrame.style.position = 'absolute';
+  els.previewFrame.style.left = `${Math.max((els.previewStage.clientWidth - scaledWidth) / 2, 0)}px`;
+  els.previewFrame.style.top = `${previewMargin}px`;
 }
 
 function generatePreviewDocument() {
