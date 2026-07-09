@@ -51,7 +51,7 @@ p { color: #52616f; }
   min-height: 0;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
@@ -61,7 +61,7 @@ p { color: #52616f; }
 #previewFrame {
   border: 0;
   background: white;
-  transform-origin: center center;
+  transform-origin: top center;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
   flex: 0 0 auto;
 }
