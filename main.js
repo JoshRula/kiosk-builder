@@ -276,7 +276,7 @@ function updatePreview() {
 
 function scalePreviewFrame() {
   const pad = 160;
-  const scale = Math.min((els.previewStage.clientWidth - pad) / state.width, (els.previewStage.clientHeight - pad) / state.height, 1) * 0.85;
+  const scale = Math.min((els.previewStage.clientWidth - pad) / state.width, (els.previewStage.clientHeight - pad) / state.height, 1) * 0.65;
   els.previewFrame.style.width = `${state.width}px`;
   els.previewFrame.style.height = `${state.height}px`;
   els.previewFrame.style.transform = `scale(${Math.max(scale, 0.05)})`;
