@@ -275,7 +275,7 @@ function updatePreview() {
 }
 
 function scalePreviewFrame() {
-  const previewMargin = 3;
+  const previewMargin = 3.25;
 
   const availableWidth = els.previewStage.clientWidth - previewMargin * 2;
   const availableHeight = els.previewStage.clientHeight - previewMargin * 2;
