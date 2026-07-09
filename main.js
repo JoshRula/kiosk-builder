@@ -3,7 +3,7 @@ Usage guide
 ===========
 1. Open index.html directly in a modern desktop browser or host these three files on GitHub Pages.
 2. Set the fixed kiosk screen size and background in Screen Settings.
-3. Adjust spans, spawns, nudges, z-indexes, and clickability; every change updates the iframe preview immediately.
+3. Adjust rows, elements, nudges, z-indexes, and clickability; every change updates the iframe preview immediately.
 4. Use the export buttons to download screen_name.html, style.css, and main.js for the finished kiosk page.
 5. The exported page is static and browser-only. Edit exported placeholder click handlers as needed.
 */
@@ -97,7 +97,7 @@ function createSpans(count, oldSpans) {
   return Array.from({ length: Math.max(0, count) }, (_, index) => {
     const old = oldSpans[index];
     const span = old ? { ...old } : {
-      id: `span-${index + 1}`,
+      id: `row-${index + 1}`,
       height: getDefaultSpanHeight(index, count),
       nudgeY: 0,
       spawnCount: DEFAULTS.spawnCount,
@@ -124,7 +124,7 @@ function createSpawns(count, oldSpawns, span, spanIndex) {
   return Array.from({ length: Math.max(0, count) }, (_, index) => {
     const old = oldSpawns[index];
     return old ? { ...old } : {
-      id: `${span.id || `span-${spanIndex + 1}`}-spawn-${index + 1}`,
+      id: `${span.id || `row-${spanIndex + 1}`}-element-${index + 1}`,
       width: span.defaultSpawnWidth,
       height: span.defaultSpawnHeight,
       nudgeX: 0,
@@ -141,14 +141,14 @@ function renderSpanControls() {
     const card = document.createElement('div');
     card.className = 'span-card';
     card.innerHTML = `
-      <h4>Span ${spanIndex + 1}</h4>
+      <h4>Row ${spanIndex + 1}</h4>
       <div class="grid three-col">
-        ${inputHtml('Span ID', `span-${spanIndex}-id`, span.id, 'text')}
+        ${inputHtml('Row ID', `span-${spanIndex}-id`, span.id, 'text')}
         ${inputHtml('Height', `span-${spanIndex}-height`, span.height)}
         ${inputHtml('Vertical nudge', `span-${spanIndex}-nudgeY`, span.nudgeY)}
-        ${inputHtml('Spawn count', `span-${spanIndex}-spawnCount`, span.spawnCount)}
-        ${inputHtml('Default spawn W', `span-${spanIndex}-defaultSpawnWidth`, span.defaultSpawnWidth)}
-        ${inputHtml('Default spawn H', `span-${spanIndex}-defaultSpawnHeight`, span.defaultSpawnHeight)}
+        ${inputHtml('Element count', `span-${spanIndex}-spawnCount`, span.spawnCount)}
+        ${inputHtml('Default element W', `span-${spanIndex}-defaultSpawnWidth`, span.defaultSpawnWidth)}
+        ${inputHtml('Default element H', `span-${spanIndex}-defaultSpawnHeight`, span.defaultSpawnHeight)}
         ${inputHtml('Horizontal padding', `span-${spanIndex}-padding`, span.padding)}
         ${inputHtml('Spacing', `span-${spanIndex}-spacing`, span.spacing)}
         <label class="checkbox-label"><input id="span-${spanIndex}-evenHorizontalSpacing" type="checkbox" ${span.evenHorizontalSpacing ? 'checked' : ''}> Even horizontal spacing</label>
@@ -194,9 +194,9 @@ function renderSpawnControls(spanIndex) {
     const card = document.createElement('div');
     card.className = 'spawn-card';
     card.innerHTML = `
-      <h5>Spawn ${spawnIndex + 1}</h5>
+      <h5>Element ${spawnIndex + 1}</h5>
       <div class="grid three-col">
-        ${inputHtml('Spawn ID', `spawn-${spanIndex}-${spawnIndex}-id`, spawn.id, 'text')}
+        ${inputHtml('Element ID', `spawn-${spanIndex}-${spawnIndex}-id`, spawn.id, 'text')}
         ${inputHtml('Width', `spawn-${spanIndex}-${spawnIndex}-width`, spawn.width)}
         ${inputHtml('Height', `spawn-${spanIndex}-${spawnIndex}-height`, spawn.height)}
         ${inputHtml('Nudge X', `spawn-${spanIndex}-${spawnIndex}-nudgeX`, spawn.nudgeX)}
@@ -275,8 +275,8 @@ function updatePreview() {
 }
 
 function scalePreviewFrame() {
-  const pad = 96;
-  const scale = Math.min((els.previewStage.clientWidth - pad) / state.width, (els.previewStage.clientHeight - pad) / state.height, 1);
+  const pad = 160;
+  const scale = Math.min((els.previewStage.clientWidth - pad) / state.width, (els.previewStage.clientHeight - pad) / state.height, 1) * 0.85;
   els.previewFrame.style.width = `${state.width}px`;
   els.previewFrame.style.height = `${state.height}px`;
   els.previewFrame.style.transform = `scale(${Math.max(scale, 0.05)})`;
@@ -287,8 +287,8 @@ function generatePreviewDocument() {
 }
 
 function generateScreenMarkup(showLabels) {
-  const spans = getLayout().map(span => `    <div id="${escapeAttr(span.id)}" class="span" style="top:${span.top}px;height:${span.height}px;">
-${span.spawns.map(spawn => `      <div id="${escapeAttr(spawn.id)}" class="spawn" style="left:${spawn.left}px;top:${spawn.top}px;width:${spawn.width}px;height:${spawn.height}px;z-index:${spawn.zIndex};">${showLabels ? escapeHtml(spawn.id) : ''}</div>`).join('\n')}
+  const spans = getLayout().map(span => `    <div id="${escapeAttr(span.id)}" class="row" style="top:${span.top}px;height:${span.height}px;">
+${span.spawns.map(spawn => `      <div id="${escapeAttr(spawn.id)}" class="element" style="left:${spawn.left}px;top:${spawn.top}px;width:${spawn.width}px;height:${spawn.height}px;z-index:${spawn.zIndex};">${showLabels ? escapeHtml(spawn.id) : ''}</div>`).join('\n')}
     </div>`).join('\n');
   return `  <div id="screenSize">\n${spans}\n  </div>`;
 }
@@ -313,10 +313,14 @@ ${generateScreenMarkup(false)}
 function generateExportCss(debugBorders) {
   const borderCss = debugBorders ? `
 #screenSize { border: 2px solid rgba(255,255,255,.75); }
-.span { border: 2px solid rgba(255,255,255,.55); }
-.spawn { border: 2px solid rgba(255,255,255,.8); }
+.row { border: 2px solid rgba(255,255,255,.55); }
+.element { border: 2px solid rgba(255,255,255,.8); }
 ` : '';
-  return `html, body {
+  return `* {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
   padding: 0;
   width: ${state.width}px;
@@ -337,14 +341,14 @@ body {
   background: ${state.background};
 }
 
-.span {
+.row {
   position: absolute;
   left: 0;
   width: ${state.width}px;
   overflow: visible;
 }
 
-.spawn {
+.element {
   position: absolute;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.08);
@@ -358,8 +362,8 @@ body {
 /* Debug borders are off by default in exported kiosk files.
    Uncomment this block while troubleshooting layout alignment.
 #screenSize { border: 2px solid rgba(255,255,255,.75); }
-.span { border: 2px solid rgba(255,255,255,.55); }
-.spawn { border: 2px solid rgba(255,255,255,.8); }
+.row { border: 2px solid rgba(255,255,255,.55); }
+.element { border: 2px solid rgba(255,255,255,.8); }
 */
 ${borderCss}`;
 }
@@ -371,7 +375,7 @@ function generateExportJs() {
     handlers.push(`  function ${fn}() {\n    console.log("${escapeJs(spawn.id)} clicked");\n  }\n\n  document.getElementById("${escapeJs(spawn.id)}").addEventListener("click", ${fn});`);
   }));
   return `document.addEventListener("DOMContentLoaded", function () {
-${handlers.length ? handlers.join('\n\n') : '  // No clickable spawns were selected in the builder.'}
+${handlers.length ? handlers.join('\n\n') : '  // No clickable elements were selected in the builder.'}
 });
 `;
 }
@@ -394,9 +398,9 @@ function toInt(value, fallback) {
 }
 
 function toPascalCase(value) {
-  const cleaned = String(value || 'spawn').replace(/[^a-zA-Z0-9]+/g, ' ').trim();
+  const cleaned = String(value || 'element').replace(/[^a-zA-Z0-9]+/g, ' ').trim();
   const pascal = cleaned.split(/\s+/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
-  return pascal || 'Spawn';
+  return pascal || 'Element';
 }
 
 function safeFileName(value) {
